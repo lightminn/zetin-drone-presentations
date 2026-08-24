@@ -18,11 +18,17 @@ jobs:
       # The deck tests render Manim scenes and export PPTX, so the full
       # toolchain has to be here. Without it 30-odd tests error out on import
       # and the run tells you nothing.
-      - name: Install Manim system libraries
+      # fonts-noto-cjk is not optional: the scenes ask Pango for
+      # "Noto Sans CJK KR" and without it the Korean glyphs fall back, one of
+      # them loses its fill colour, and test_swarm_future_uses_caution fails on
+      # a colour contract that is actually fine.
+      - name: Install Manim system libraries and the Korean font
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            libcairo2-dev libpango1.0-dev ffmpeg
+            libcairo2-dev libpango1.0-dev ffmpeg fonts-noto-cjk
+          fc-cache -f
+          fc-list | grep -c "Noto Sans CJK" || (echo "Noto Sans CJK missing" >&2; exit 1)
       - name: Install test dependencies
         run: python -m pip install -r requirements.txt
 
