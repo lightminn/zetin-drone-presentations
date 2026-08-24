@@ -6,16 +6,33 @@ on:
   pull_request:
 
 jobs:
-  python:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Byte-compile presentation tooling
+          cache: pip
+
+      # The deck tests render Manim scenes and export PPTX, so the full
+      # toolchain has to be here. Without it 30-odd tests error out on import
+      # and the run tells you nothing.
+      - name: Install Manim system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libcairo2-dev libpango1.0-dev ffmpeg
+      - name: Install test dependencies
+        run: python -m pip install manim python-pptx matplotlib numpy
+
+      - name: Byte-compile tooling
         run: python -m py_compile tools/build_presentation_site.py tools/oracle_web/*.py
+
+      # Run from the repository root: several tests resolve deck paths and
+      # spawn subprocesses relative to it.
       - name: Unit tests
         run: python -m unittest discover -s tools -p "test_*.py" -v
+
       - name: Build the Pages site
         run: python tools/build_presentation_site.py --output /tmp/site-check

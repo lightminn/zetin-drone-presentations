@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import socket
 import subprocess
+import sys
 import tempfile
 import textwrap
 import unittest
@@ -67,7 +68,7 @@ class PresentationLauncherTests(unittest.TestCase):
             {
                 "TMPDIR": str(runtime_root),
                 "PRESENTATION_CHROME_BIN": str(browser),
-                "PRESENTATION_PYTHON_BIN": "/home/light/anaconda3/bin/python",
+                "PRESENTATION_PYTHON_BIN": sys.executable,
                 "PRESENTATION_TEST_BROWSER_ARGS": str(browser_args),
                 "PRESENTATION_TEST_BODY": str(response_body),
                 "PRESENTATION_TEST_BROWSER_EXIT": str(browser_exit),
