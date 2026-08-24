@@ -19,7 +19,7 @@
 - 선택 장착 예정인 3901-L0X 1개
 
 위 범위는 [`index.html`](index.html)의 `하드웨어 구성` 장표와
-[`dual_imu_cascade_pwm.ino`](../../../firmware/flight/dual_imu_cascade_pwm/dual_imu_cascade_pwm.ino)의
+[`dual_imu_cascade_pwm.ino`](https://github.com/lightminn/zetin-drone/blob/main/firmware/flight/dual_imu_cascade_pwm/dual_imu_cascade_pwm.ino)의
 현행 모터·센서 객체에서 확인했다. 정확한 모터·ESC·배터리·프로펠러 구매 SKU와
 자체 PCB의 리비전별 BOM은 저장소에 없다. 모터 4개 80,000원과 ESC 4개
 40,000원은 사용자가 확인한 프로젝트 예상값이며 현재 판매가 근거가 아니다.
