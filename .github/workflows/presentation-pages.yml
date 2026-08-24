@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - feat/magcal-ellipsoid-fit
     paths:
       - docs/presentations/ai-startup-camp-drone/index.html
       - docs/presentations/ai-startup-camp-drone/support.js

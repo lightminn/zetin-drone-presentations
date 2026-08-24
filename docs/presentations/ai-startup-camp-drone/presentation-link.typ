@@ -1,4 +1,4 @@
-#let deck-url = "https://lightminn.github.io/zetin-drone/"
+#let deck-url = "https://lightminn.github.io/zetin-drone-presentations/"
 #let ink = rgb("#172033")
 #let muted = rgb("#657087")
 #let accent = rgb("#2357D9")
