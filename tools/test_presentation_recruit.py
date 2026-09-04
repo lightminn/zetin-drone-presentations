@@ -480,8 +480,8 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                     self.assertTrue(item["lineCounts"], result)
                     for declared, counts in item["lineCounts"].items():
                         self.assertEqual(counts, [int(declared)] * len(counts), result)
-                    self.assertEqual(len(item["lineCounts"].get("2", [])), 2, result)
-                    self.assertEqual(len(item["lineCounts"].get("1", [])), 6, result)
+                    self.assertEqual(len(item["lineCounts"].get("2", [])), 1, result)
+                    self.assertEqual(len(item["lineCounts"].get("1", [])), 7, result)
 
     def test_real_hover_video_autoplays_and_resets_after_leaving_slide(self) -> None:
         self._evaluate("document.querySelector('deck-stage').goTo(0)")
