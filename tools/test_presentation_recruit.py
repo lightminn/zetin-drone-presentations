@@ -89,7 +89,7 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
         normalized = re.sub(r"\s+", " ", self.source)
         for phrase in (
             "상용 비행제어기 없이, 첫 비행까지",
-            "이번 학기 할 일, 함께할 사람",
+            "앞으로의 목표, 함께할 사람",
             "실제 기체 · 테더로 이동 범위를 제한한 비행 시험",
             "직접 설계한 프레임 · 실제 기체",
             "자체 비행제어 PCB · ESP32-S3",
