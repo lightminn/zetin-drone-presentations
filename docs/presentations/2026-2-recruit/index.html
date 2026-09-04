@@ -32,7 +32,7 @@
 
   <section data-label="모집 개요" data-screen-label="01" data-speaker-notes="영상은 이동 범위를 테더로 제한한 실제 기체의 자세 제어 시험이다. 상용 비행제어기 없이 프레임·PCB·펌웨어를 직접 만들어 여기까지 왔고, 8월에는 176초 무고장 실비행과 이륙·호버·착륙 반복을 했다. 자유비행 완성이 아니라 공중에서 자세 제어와 안전 절차가 동작했다는 증거다." style="background:#fff">
     <x-import component-from-global-scope="UOSSlideDS.ContentSlide" hint-size="100%,100%" title="드론 · 상용 비행제어기 없이, 첫 비행까지">
-      <div class="fill" data-result-refresh="1" style="display:grid;grid-template-columns:1.6fr 1fr;grid-template-rows:minmax(0,1fr) auto;gap:16px 20px">
+      <div class="fill" data-result-refresh="1" style="display:grid;grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:minmax(0,1fr) auto;gap:16px 20px">
         <div data-result-element style="display:flex;flex-direction:column;gap:8px;min-height:0">
           <figure class="panel" style="flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:8px">
             <div style="flex:1;min-height:0;overflow:hidden">
@@ -42,17 +42,11 @@
           </figure>
         </div>
         <div data-result-element style="display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0">
-          <figure class="panel" style="padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden">
-            <div style="flex:1;min-height:0;overflow:hidden">
-              <img src="assets/assembled-bench.jpeg" alt="직접 설계한 프레임과 비행제어 PCB를 얹은 실제 벤치 기체" style="width:100%;height:100%;object-fit:cover;object-position:center center">
-            </div>
-            <figcaption class="caption nowrap">직접 설계한 프레임 · 실제 기체</figcaption>
+          <figure style="background:#172334;border-radius:4px;min-height:0;overflow:hidden;display:grid;place-items:center">
+            <img src="assets/assembled-bench.jpeg" alt="직접 설계한 프레임 · 실제 기체" style="width:100%;height:100%;object-fit:contain;object-position:center center">
           </figure>
-          <figure class="panel" style="padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden">
-            <div style="flex:1;min-height:0;overflow:hidden">
-              <img src="assets/pcb-built.jpeg" alt="자체 비행제어 PCB" style="width:100%;height:100%;object-fit:cover;object-position:center center">
-            </div>
-            <figcaption class="caption nowrap">자체 비행제어 PCB · ESP32-S3</figcaption>
+          <figure style="background:#172334;border-radius:4px;min-height:0;overflow:hidden;display:grid;place-items:center">
+            <img src="assets/pcb-built.jpeg" alt="자체 비행제어 PCB · ESP32-S3" style="width:100%;height:100%;object-fit:contain;object-position:center center">
           </figure>
         </div>
         <div data-result-element class="keyline" style="grid-column:1 / 3;display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:center">
