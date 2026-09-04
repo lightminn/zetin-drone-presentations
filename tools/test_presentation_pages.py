@@ -50,6 +50,13 @@ class PresentationPagesBuildTests(unittest.TestCase):
                 "10min/vendor/uos-slide-template/_ds_bundle.js",
                 "10min/vendor/uos-slide-template/fonts/NotoSansCJKkr-Medium.woff2",
                 "10min/assets/hover_demo.mp4",
+                "2026-2-recruit/index.html",
+                "2026-2-recruit/support.js",
+                "2026-2-recruit/deck-stage.js",
+                "2026-2-recruit/vendor/uos-slide-template/_ds_bundle.js",
+                "2026-2-recruit/vendor/uos-slide-template/fonts/NotoSansCJKkr-Medium.woff2",
+                "2026-2-recruit/assets/assembled-bench.jpeg",
+                "2026-2-recruit/assets/deck-qr.png",
             }
             missing = sorted(path for path in required if not (site / path).is_file())
 

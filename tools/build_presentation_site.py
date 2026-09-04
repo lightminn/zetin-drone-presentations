@@ -12,6 +12,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DECKS = (
     ("ai-startup-camp-drone", ""),
     ("ai-startup-camp-drone-10min", "10min"),
+    ("2026-2-recruit", "2026-2-recruit"),
 )
 RUNTIME_FILES = ("index.html", "support.js", "deck-stage.js")
 

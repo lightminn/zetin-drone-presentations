@@ -13,6 +13,7 @@
 |---|---|---|---|
 | AI 창업캠프 드론 기술 교안 | 드론·제어 입문자, 2시간 30분 | [`index.html`](docs/presentations/ai-startup-camp-drone/index.html) | https://lightminn.github.io/zetin-drone-presentations/ |
 | 10분 요약본 | 개발 결과 소개 10분 | [`index.html`](docs/presentations/ai-startup-camp-drone-10min/index.html) | https://lightminn.github.io/zetin-drone-presentations/10min/ |
+| 2026-2 개강총회 모집 자료 | 신입 부원, 2장 | [`index.html`](docs/presentations/2026-2-recruit/index.html) | https://lightminn.github.io/zetin-drone-presentations/2026-2-recruit/ |
 
 주장과 그 근거의 대응은 각 덱의 `SOURCES.md`가 갖는다. 성숙도 경계(코드로 확인
 / 벤치·비행으로 확인 / 아직 확인 안 됨)를 그 문서가 구분해 두었으므로,

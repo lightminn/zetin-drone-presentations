@@ -15,6 +15,11 @@ on:
       - docs/presentations/ai-startup-camp-drone-10min/deck-stage.js
       - docs/presentations/ai-startup-camp-drone-10min/assets/**
       - docs/presentations/ai-startup-camp-drone-10min/vendor/**
+      - docs/presentations/2026-2-recruit/index.html
+      - docs/presentations/2026-2-recruit/support.js
+      - docs/presentations/2026-2-recruit/deck-stage.js
+      - docs/presentations/2026-2-recruit/assets/**
+      - docs/presentations/2026-2-recruit/vendor/**
       - tools/build_presentation_site.py
       - .github/workflows/presentation-pages.yml
   workflow_dispatch:
