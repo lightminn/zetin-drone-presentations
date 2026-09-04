@@ -57,6 +57,7 @@ class PresentationPagesBuildTests(unittest.TestCase):
                 "2026-2-recruit/vendor/uos-slide-template/fonts/NotoSansCJKkr-Medium.woff2",
                 "2026-2-recruit/assets/assembled-bench.jpeg",
                 "2026-2-recruit/assets/deck-qr.png",
+                "2026-2-recruit/assets/hover_demo.mp4",
             }
             missing = sorted(path for path in required if not (site / path).is_file())
 

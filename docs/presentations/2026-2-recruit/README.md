@@ -1,6 +1,7 @@
 # 2026-2 개강총회 드론 팀 모집 자료
 
 `index.html`이 편집 원본인 2장짜리 개강총회 모집용 웹 덱이다. 내용은 `10분 요약본`과 엔지니어링 저장소 `README.md`의 "어디까지 왔나"를 바탕으로 정리했다.
+`assets/hover_demo.mp4`는 10분 덱의 같은 이름 파일을 그대로 복사한 것이다.
 
 공개본은 https://lightminn.github.io/zetin-drone-presentations/2026-2-recruit/ 에서 확인한다.
 

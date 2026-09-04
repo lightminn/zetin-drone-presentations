@@ -46,6 +46,7 @@ class _DeckParser(HTMLParser):
         super().__init__()
         self.sections: list[dict[str, str | None]] = []
         self.images: list[dict[str, str | None]] = []
+        self.videos: list[dict[str, str | None]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
@@ -53,6 +54,8 @@ class _DeckParser(HTMLParser):
             self.sections.append(attributes)
         elif tag == "img":
             self.images.append(attributes)
+        elif tag == "video":
+            self.videos.append(attributes)
 
 
 class PresentationRecruitHtmlTests(unittest.TestCase):
@@ -87,9 +90,9 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
         for phrase in (
             "상용 비행제어기 없이, 첫 비행까지",
             "이번 학기 할 일, 함께할 사람",
-            "직접 설계한 프레임과 비행제어 PCB를 얹은 실제 기체",
-            "모듈형 프레임 CAD",
-            "자체 비행제어 PCB",
+            "실제 기체 · 테더로 이동 범위를 제한한 비행 시험",
+            "직접 설계한 프레임 · 실제 기체",
+            "자체 비행제어 PCB · ESP32-S3",
             "8월 첫 실비행 · 고장 0건",
             "GitHub 공개",
             "경험 없어도 됩니다",
@@ -100,11 +103,46 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
             self.assertIn(phrase, normalized)
         for image in (
             "assets/assembled-bench.jpeg",
-            "assets/cad-top.png",
             "assets/pcb-built.jpeg",
             "assets/deck-qr.png",
         ):
             self.assertIn(f'src="{image}"', self.source)
+        self.assertEqual(len(self.parser.videos), 1)
+        video = self.parser.videos[0]
+        self.assertEqual(video.get("src"), "assets/hover_demo.mp4")
+        for attribute in ("controls", "loop", "muted", "playsinline", "preload"):
+            self.assertIn(attribute, video)
+        self.assertEqual(video.get("preload"), "metadata")
+        self.assertTrue((DECK_DIR / "assets" / "hover_demo.mp4").is_file())
+        self.assertNotIn('src="assets/cad-top.png"', self.source)
+
+    def test_source_video_is_chrome_compatible_h264_30fps(self) -> None:
+        ffprobe = shutil.which("ffprobe")
+        if ffprobe is None:
+            self.skipTest("ffprobe is not available")
+        result = subprocess.run(
+            [
+                ffprobe,
+                "-v",
+                "error",
+                "-select_streams",
+                "v:0",
+                "-show_entries",
+                "stream=codec_name,width,height,r_frame_rate",
+                "-of",
+                "json",
+                str(DECK_DIR / "assets" / "hover_demo.mp4"),
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        payload = json.loads(result.stdout)
+        stream = payload["streams"][0]
+        self.assertEqual(stream["codec_name"], "h264")
+        self.assertEqual(stream["width"], 1280)
+        self.assertEqual(stream["height"], 720)
+        self.assertEqual(stream["r_frame_rate"], "30/1")
 
     def test_runtime_files_match_ten_minute_deck_byte_for_byte(self) -> None:
         for filename in ("support.js", "deck-stage.js"):
@@ -394,6 +432,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                   lineCounts[element.dataset.lines] = lineCounts[element.dataset.lines] || [];
                   lineCounts[element.dataset.lines].push(visualLines(element));
                 }
+                const video = slide.querySelector('video');
                 findings[number] = {
                   refresh: slide.querySelector('[data-result-refresh]')?.dataset.resultRefresh || null,
                   markedElements: elements.length,
@@ -402,6 +441,13 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                   overlaps,
                   tokenSplits,
                   lineCounts,
+                  videoRect: video ? {
+                    width: Math.round(video.getBoundingClientRect().width),
+                    height: Math.round(video.getBoundingClientRect().height),
+                    paused: video.paused,
+                    muted: video.muted,
+                  } : null,
+                  slideHeight: Math.round(slideRect.height),
                 };
               }
               return findings;
@@ -417,12 +463,67 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                 self.assertEqual(item["smallText"], [], result)
                 self.assertEqual(item["overlaps"], [], result)
                 self.assertEqual(item["tokenSplits"], [], result)
-                self.assertTrue(item["lineCounts"], result)
-                for declared, counts in item["lineCounts"].items():
-                    self.assertEqual(counts, [int(declared)] * len(counts), result)
-        self.assertEqual(len(result["1"]["lineCounts"].get("2", [])), 3, result)
-        self.assertEqual(len(result["2"]["lineCounts"].get("2", [])), 2, result)
-        self.assertEqual(len(result["2"]["lineCounts"].get("1", [])), 6, result)
+                if number == 1:
+                    self.assertEqual(item["lineCounts"], {}, result)
+                    self.assertIsNotNone(item["videoRect"], result)
+                    self.assertGreaterEqual(item["videoRect"]["height"], item["slideHeight"] * 0.45, result)
+                    self.assertFalse(item["videoRect"]["paused"], result)
+                    self.assertTrue(item["videoRect"]["muted"], result)
+                else:
+                    self.assertTrue(item["lineCounts"], result)
+                    for declared, counts in item["lineCounts"].items():
+                        self.assertEqual(counts, [int(declared)] * len(counts), result)
+                    self.assertEqual(len(item["lineCounts"].get("2", [])), 2, result)
+                    self.assertEqual(len(item["lineCounts"].get("1", [])), 6, result)
+
+    def test_real_hover_video_autoplays_and_resets_after_leaving_slide(self) -> None:
+        self._evaluate("document.querySelector('deck-stage').goTo(0)")
+        self._evaluate("document.querySelector('deck-stage')._fit()")
+        deadline = time.monotonic() + 8.0
+        after_enter = None
+        while time.monotonic() < deadline:
+            after_enter = self._evaluate(
+                """
+                (() => {
+                  const video = document.querySelector('deck-stage')._slides[0].querySelector('video');
+                  return video ? {
+                    paused: video.paused,
+                    muted: video.muted,
+                    currentTime: video.currentTime
+                  } : null;
+                })()
+                """
+            )
+            if after_enter and not after_enter["paused"]:
+                break
+            time.sleep(0.1)
+        self.assertIsNotNone(after_enter, "video never appeared on slide 1")
+        self.assertFalse(after_enter["paused"], after_enter)
+        self.assertTrue(after_enter["muted"], after_enter)
+        self.assertGreaterEqual(after_enter["currentTime"], 0, after_enter)
+
+        self._evaluate("document.querySelector('deck-stage').goTo(1)")
+        self._evaluate("document.querySelector('deck-stage')._fit()")
+        deadline = time.monotonic() + 8.0
+        after_leave = None
+        while time.monotonic() < deadline:
+            after_leave = self._evaluate(
+                """
+                (() => {
+                  const video = document.querySelector('deck-stage')._slides[0].querySelector('video');
+                  return video ? {
+                    paused: video.paused,
+                    muted: video.muted,
+                    currentTime: video.currentTime
+                  } : null;
+                })()
+                """
+            )
+            if after_leave and after_leave["paused"]:
+                break
+            time.sleep(0.1)
+        self.assertIsNotNone(after_leave, "video never settled after leaving slide 1")
+        self.assertTrue(after_leave["paused"], after_leave)
 
 
 if __name__ == "__main__":
