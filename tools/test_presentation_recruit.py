@@ -99,12 +99,14 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
             "경험 없어도 됩니다",
             "이런 사람을 찾습니다",
             "드론 팀 모집 폼",
+            "github.com/lightminn/zetin-drone",
         ):
             self.assertIn(phrase, normalized)
         for image in (
             "assets/assembled-bench.jpeg",
             "assets/pcb-built.jpeg",
             "assets/form-qr.png",
+            "assets/github-qr.png",
         ):
             self.assertIn(f'src="{image}"', self.source)
         self.assertEqual(len(self.parser.videos), 1)
@@ -170,6 +172,9 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
         url = match.group(1)
         self.assertRegex(url, r"^https://(forms\.gle/|docs\.google\.com/forms/)")
         self.assertNotIn("PLACEHOLDER", self.source)
+        github = re.search(r'data-github-link href="([^"]+)"', self.source)
+        self.assertIsNotNone(github, "missing data-github-link anchor")
+        self.assertEqual(github.group(1), "https://github.com/lightminn/zetin-drone")
 
     def test_no_commit_hash_or_day_specific_date_leaks(self) -> None:
         self.assertIsNone(re.search(r"\b[0-9a-f]{40}\b", self.source))
