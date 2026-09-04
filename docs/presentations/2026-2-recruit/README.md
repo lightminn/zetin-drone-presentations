@@ -2,6 +2,7 @@
 
 `index.html`이 편집 원본인 2장짜리 개강총회 모집용 웹 덱이다. 내용은 `10분 요약본`과 엔지니어링 저장소 `README.md`의 "어디까지 왔나"를 바탕으로 정리했다.
 `assets/hover_demo.mp4`는 10분 덱의 같은 이름 파일을 그대로 복사한 것이다.
+`assets/form-qr.png`는 2쪽 하단 구글폼 모집 링크의 QR이다. 링크가 바뀌면 `index.html`의 `data-form-link` 주소를 고치고 `qrencode -o assets/form-qr.png -s 10 -m 2 -l M "<새 링크>"` 로 다시 만든다.
 
 공개본은 https://lightminn.github.io/zetin-drone-presentations/2026-2-recruit/ 에서 확인한다.
 

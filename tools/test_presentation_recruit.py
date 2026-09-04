@@ -98,14 +98,13 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
             "실제 비행으로 검증",
             "경험 없어도 됩니다",
             "이런 사람을 찾습니다",
-            "10분 요약본",
-            "lightminn.github.io/zetin-drone-presentations/10min/",
+            "드론 팀 모집 폼",
         ):
             self.assertIn(phrase, normalized)
         for image in (
             "assets/assembled-bench.jpeg",
             "assets/pcb-built.jpeg",
-            "assets/deck-qr.png",
+            "assets/form-qr.png",
         ):
             self.assertIn(f'src="{image}"', self.source)
         self.assertEqual(len(self.parser.videos), 1)
@@ -164,6 +163,13 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
             script.replace("drone-recruit-presentation", "drone-summary-presentation"),
             original,
         )
+
+    def test_form_link_is_a_real_google_form(self) -> None:
+        match = re.search(r'data-form-link href="([^"]+)"', self.source)
+        self.assertIsNotNone(match, "missing data-form-link anchor")
+        url = match.group(1)
+        self.assertRegex(url, r"^https://(forms\.gle/|docs\.google\.com/forms/)")
+        self.assertNotIn("PLACEHOLDER", self.source)
 
     def test_no_commit_hash_or_day_specific_date_leaks(self) -> None:
         self.assertIsNone(re.search(r"\b[0-9a-f]{40}\b", self.source))
