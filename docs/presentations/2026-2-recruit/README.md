@@ -18,6 +18,6 @@ cd docs/presentations/2026-2-recruit
 /home/light/anaconda3/bin/python -m unittest tools.test_presentation_recruit -v
 ```
 
-수치(176초, 5/5, 1 kHz)는 엔지니어링 저장소 README·`docs/project_overview.md`가 원본이며, 바뀌면 그쪽을 먼저 고친다.
+성숙도 표현(어디까지 검증됐는지)은 엔지니어링 저장소 README·`docs/project_overview.md`가 원본이며, 바뀌면 그쪽을 먼저 고친다.
 
 `support.js`, `deck-stage.js`, `vendor/`는 10분 덱의 복사본이고, 테스트가 byte-identical 여부를 확인한다.
