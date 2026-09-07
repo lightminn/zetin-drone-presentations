@@ -74,16 +74,22 @@ class PresentationRecruitHtmlTests(unittest.TestCase):
         self.assertIsNotNone(match, f"missing slide {screen_label}")
         return match.group(0)
 
-    def test_deck_has_two_slides_with_notes(self) -> None:
-        self.assertEqual(len(self.parser.sections), 2)
+    def test_deck_has_cover_and_two_content_slides_with_notes(self) -> None:
+        self.assertEqual(len(self.parser.sections), 3)
         self.assertEqual(
             [item.get("data-screen-label") for item in self.parser.sections],
-            ["01", "02"],
+            ["01", "02", "03"],
         )
         self.assertTrue(all(item.get("data-label") for item in self.parser.sections))
         self.assertTrue(
             all(item.get("data-speaker-notes", "").strip() for item in self.parser.sections)
         )
+
+    def test_cover_is_a_title_slide_with_recruit_identity(self) -> None:
+        slide = self.slide_source("01")
+        self.assertIn("UOSSlideDS.TitleSlide", slide)
+        self.assertIn('title="자작 드론 팀\n신입 부원 모집"', slide)
+        self.assertIn('subtitle="ZETIN 2026-2 개강총회 · 드론 팀 신입 부원 모집"', slide)
 
     def test_deck_mentions_required_text_and_uses_required_assets(self) -> None:
         normalized = re.sub(r"\s+", " ", self.source)
@@ -255,7 +261,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
         while time.monotonic() < deadline:
             if cls._evaluate(
                 "document.readyState === 'complete' && "
-                "document.querySelector('deck-stage')?._slides?.length === 2 && "
+                "document.querySelector('deck-stage')?._slides?.length === 3 && "
                 "document.fonts.status === 'loaded'"
             ):
                 cls._evaluate(
@@ -264,7 +270,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                 )
                 return
             time.sleep(0.05)
-        raise RuntimeError("2-slide presentation did not become ready")
+        raise RuntimeError("3-slide presentation did not become ready")
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -358,7 +364,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             (() => {
               const stage = document.querySelector('deck-stage');
               const findings = {};
-              const slideNumbers = [1, 2];
+              const slideNumbers = [1, 2, 3];
               const textNodes = (root) => {
                 const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
                 const nodes = [];
@@ -466,16 +472,23 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             })()
             """
         )
-        for number in (1, 2):
+        for number in (1, 2, 3):
             with self.subTest(slide=number):
                 item = result[str(number)]
-                self.assertEqual(item["refresh"], str(number), result)
-                self.assertGreaterEqual(item["markedElements"], 1, result)
+                if number == 1:
+                    self.assertIsNone(item["refresh"], result)
+                    self.assertEqual(item["markedElements"], 0, result)
+                else:
+                    self.assertEqual(item["refresh"], str(number), result)
+                    self.assertGreaterEqual(item["markedElements"], 1, result)
                 self.assertEqual(item["overflow"], [], result)
                 self.assertEqual(item["smallText"], [], result)
                 self.assertEqual(item["overlaps"], [], result)
                 self.assertEqual(item["tokenSplits"], [], result)
                 if number == 1:
+                    self.assertEqual(item["lineCounts"], {}, result)
+                    self.assertIsNone(item["videoRect"], result)
+                elif number == 2:
                     self.assertEqual(item["lineCounts"], {}, result)
                     self.assertIsNotNone(item["videoRect"], result)
                     self.assertGreaterEqual(item["videoRect"]["height"], item["slideHeight"] * 0.45, result)
@@ -489,7 +502,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
                     self.assertEqual(len(item["lineCounts"].get("1", [])), 7, result)
 
     def test_real_hover_video_autoplays_and_resets_after_leaving_slide(self) -> None:
-        self._evaluate("document.querySelector('deck-stage').goTo(0)")
+        self._evaluate("document.querySelector('deck-stage').goTo(1)")
         self._evaluate("document.querySelector('deck-stage')._fit()")
         deadline = time.monotonic() + 8.0
         after_enter = None
@@ -497,7 +510,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             after_enter = self._evaluate(
                 """
                 (() => {
-                  const video = document.querySelector('deck-stage')._slides[0].querySelector('video');
+                  const video = document.querySelector('deck-stage')._slides[1].querySelector('video');
                   return video ? {
                     paused: video.paused,
                     muted: video.muted,
@@ -509,12 +522,12 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             if after_enter and not after_enter["paused"]:
                 break
             time.sleep(0.1)
-        self.assertIsNotNone(after_enter, "video never appeared on slide 1")
+        self.assertIsNotNone(after_enter, "video never appeared on slide 2")
         self.assertFalse(after_enter["paused"], after_enter)
         self.assertTrue(after_enter["muted"], after_enter)
         self.assertGreaterEqual(after_enter["currentTime"], 0, after_enter)
 
-        self._evaluate("document.querySelector('deck-stage').goTo(1)")
+        self._evaluate("document.querySelector('deck-stage').goTo(2)")
         self._evaluate("document.querySelector('deck-stage')._fit()")
         deadline = time.monotonic() + 8.0
         after_leave = None
@@ -522,7 +535,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             after_leave = self._evaluate(
                 """
                 (() => {
-                  const video = document.querySelector('deck-stage')._slides[0].querySelector('video');
+                  const video = document.querySelector('deck-stage')._slides[1].querySelector('video');
                   return video ? {
                     paused: video.paused,
                     muted: video.muted,
@@ -534,7 +547,7 @@ class PresentationRecruitBrowserWrapTests(unittest.TestCase):
             if after_leave and after_leave["paused"]:
                 break
             time.sleep(0.1)
-        self.assertIsNotNone(after_leave, "video never settled after leaving slide 1")
+        self.assertIsNotNone(after_leave, "video never settled after leaving slide 2")
         self.assertTrue(after_leave["paused"], after_leave)
 
 
