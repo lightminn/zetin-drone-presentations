@@ -48,7 +48,7 @@
 
 <x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1280" height="720" hint-size="100%,100%">
 <section data-label="자작 쿼드콥터 비행제어기와" data-screen-label="01" data-speaker-notes="안녕하십니까. ZETIN 드론 파트 [ ]입니다. 본 발표에서는 자체 개발한 쿼드콥터 비행제어기와 광류 기반 위치 유지 적용 결과를 보고합니다. 기체 하드웨어와 캐스케이드 제어 원리, 8월 테더 실비행 결과를 먼저 공유하고, 수평 드리프트를 보완할 광류·거리 센서 시험과 위치 유지 알고리즘, 금일 6회 실비행 비교 결과와 향후 일정을 설명합니다. (전환)" style="background:#fff">
-<x-import component-from-global-scope="UOSSlideDS.TitleSlide" hint-size="100%,100%" subtitle="서울시립대학교 ZETIN 드론 파트 · 2026-10-30 성과공유 발표" date="2026.10.30 결과보고회" title="자작 쿼드콥터 비행제어기와
+<x-import component-from-global-scope="UOSSlideDS.TitleSlide" hint-size="100%,100%" subtitle="서울시립대학교 ZETIN 드론 파트" date="2026.10.30 결과보고회" title="자작 쿼드콥터 비행제어기와
 광류 기반 위치 유지 적용"></x-import>
 </section>
 <section data-label="01 기체와 제어 보드" data-screen-label="02" data-speaker-notes="먼저 자체 제작한 기체 프레임과 비행제어 보드입니다. 충돌 파손에 대비해 암과 상하판을 분리형으로 설계하여 파손 부품만 3D 프린터로 재출력해 교체합니다. 비행제어 PCB는 자체 설계로 v1.5.2까지 제작해 연산용 ESP32-S3와 6축 IMU 2개, 지자기 센서를 단일 기판에 통합하였습니다. 통신은 기체 ESP32가 여는 와이파이 SoftAP에 지상국 PC를 연결해 게임패드 명령을 UDP로 송신하고 상태를 20Hz로 수신합니다. (전환)" style="background:#fff">
