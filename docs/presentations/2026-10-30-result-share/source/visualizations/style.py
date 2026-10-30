@@ -40,7 +40,7 @@ def labeled(box_w, box_h, title, sub=None, stroke=BLUE, tsize=30, ssize=22, tcol
     return g
 
 
-def quad_top(scale=1.0, with_labels=True):
+def quad_top(scale=1.0, with_labels=True, arrows=False):
     """위에서 본 X자 쿼드콥터. 반환: VGroup, 모터 리스트(프롭 회전용), 라벨."""
     s = scale
     arm1 = Line(UL * 1.9 * s, DR * 1.9 * s, stroke_width=22 * s, color=INK).set_cap_style(CapStyleType.ROUND)
@@ -56,13 +56,26 @@ def quad_top(scale=1.0, with_labels=True):
         col = AMBER if cw[k] else BLUE
         disc = Circle(radius=0.62 * s, stroke_color=col, stroke_width=5, fill_color=PAPER, fill_opacity=1).move_to(c)
         blade = VGroup(Line(LEFT * 0.55 * s, RIGHT * 0.55 * s, stroke_width=9 * s, color=col),
-                       Line(UP * 0.55 * s, DOWN * 0.55 * s, stroke_width=9 * s, color=col)).move_to(c)
+                       Line(UP * 0.55 * s, DOWN * 0.55 * s, stroke_width=9 * s, color=col),
+                       Dot(radius=0.13 * s, color=INK).move_to(RIGHT * 0.5 * s)).move_to(c)
+        if False:
+            pass
         motors[k] = disc
         props[k] = blade
         if with_labels:
             labels[k] = VGroup(T(k, 30 * s, INK, True), T("CW" if cw[k] else "CCW", 24 * s, col, True)).arrange(DOWN, buff=0.04 * s)
-            labels[k].move_to(c + (UP if d[1] > 0 else DOWN) * 1.0 * s)
-    g = VGroup(arm1, arm2, body, nose, *motors.values(), *props.values(), *labels.values())
+            labels[k].move_to(c + (UP if d[1] > 0 else DOWN) * (1.6 if arrows else 1.0) * s)
+    dir_arrows = {}
+    if arrows:
+        for k, d in pos.items():
+            c = d * 1.9 * s
+            col = AMBER if cw[k] else BLUE
+            ang = -PI * 1.45 if cw[k] else PI * 1.45
+            st = PI * 0.62 if cw[k] else PI * 0.38
+            a = Arc(radius=0.9 * s, start_angle=st, angle=ang, stroke_color=col, stroke_width=6 * s).move_arc_center_to(c)
+            a.add_tip(tip_length=0.28 * s, tip_width=0.28 * s)
+            dir_arrows[k] = a
+    g = VGroup(arm1, arm2, body, nose, *motors.values(), *props.values(), *dir_arrows.values(), *labels.values())
     return g, motors, props, labels
 
 

@@ -298,7 +298,7 @@ ASSETS = {
 DIAGRAMS = {3: svg_quad, 4: svg_filter, 6: None, 7: svg_sensor, 8: svg_frames, 9: svg_tilt, 10: svg_poshold, 11: svg_camera}
 
 
-ANIM = {4: "slide04", 7: "slide07", 8: "slide08", 10: "slide10", 11: "slide11"}
+ANIM = {4: "slide04", 7: "slide07", 8: "slide08"}   # 영상으로 만든 장(3·6장은 별도 처리). 9·10·11장은 정지 도식
 
 
 def anim_el(name):
@@ -360,8 +360,8 @@ def L_steps(s):
     n = s["n"]
     fig = media_el(s["visual"], n)
     extra = ""
-    if MODE != "svg" and n in (3, 9):
-        extra = f'<div class="panel" style="padding:0;min-height:0;overflow:hidden">{anim_el("slide03" if n == 3 else "slide09")}</div>'
+    if MODE != "svg" and n == 3:
+        extra = f'<div class="panel" style="padding:0;min-height:0;overflow:hidden">{anim_el("slide03")}</div>'
     elif n == 3:
         extra = (f'<div style="display:grid;grid-template-columns:.62fr 1fr;gap:20px;min-height:0">'
                  f'<div class="panel" style="padding:6px;min-height:0">{svg_quad()}</div>'

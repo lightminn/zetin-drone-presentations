@@ -6,7 +6,7 @@ class Slide03(Scene):
     """네 로터 추력 배분(롤·피치·요)과 캐스케이드 루프. 와이드(2400x480)."""
 
     def construct(self):
-        quad, motors, props, labels = quad_top(1.0)
+        quad, motors, props, labels = quad_top(0.88, arrows=True)
         quad.move_to(LEFT * 16.0)
         # 모터별 추력 값과 막대
         th = {k: ValueTracker(0.55) for k in motors}
@@ -25,7 +25,7 @@ class Slide03(Scene):
         # 프롭 회전: 추력에 비례
         for k, p in props.items():
             direction = -1 if k in ("M1", "M2") else 1
-            p.add_updater(lambda m, dt, v=th[k], d=direction: m.rotate(d * (4 + 26 * v.get_value()) * dt))
+            p.add_updater(lambda m, dt, v=th[k], d=direction: m.rotate(d * (0.9 + 3.2 * v.get_value()) * dt))
 
         # 수식 열
         def line(name, sgn):

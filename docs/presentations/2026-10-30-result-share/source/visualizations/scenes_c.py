@@ -90,7 +90,7 @@ class Slide08(Scene):
 
     def construct(self):
         x0, x1 = -5.6, 2.6
-        parser = labeled(3.0, 2.8, "MSPv2", "수신 · CRC 검사", stroke=BLUE, tsize=32, ssize=22).move_to([4.6, 1.9, 0])
+        parser = labeled(3.0, 2.8, "MSPv2", "패킷 수신", stroke=BLUE, tsize=32, ssize=22).move_to([4.6, 1.9, 0])
         lane1 = Line([x0, 3.0, 0], [x1, 3.0, 0], color=TEAL, stroke_width=2)
         lane2 = Line([x0, 0.9, 0], [x1, 0.9, 0], color=AMBER, stroke_width=2)
         t1 = T("광류 약 10 Hz", 28, TEAL, True).move_to([-4.2, 3.55, 0])

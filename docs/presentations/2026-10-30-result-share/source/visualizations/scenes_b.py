@@ -64,8 +64,8 @@ class Slide06L(Scene):
     def construct(self):
         quad, motors, props, labels = quad_top(0.55, with_labels=False)
         quad.move_to(LEFT * 4.2 + UP * 0.5)
-        for p in props.values():
-            p.add_updater(lambda m, dt: m.rotate(14 * dt))
+        for k, p in props.items():
+            p.add_updater(lambda m, dt, d=(-1 if k in ("M1", "M2") else 1): m.rotate(d * 2.6 * dt))
         # 조종 스틱(우측)
         gate = Circle(radius=0.95, color=MUTED, stroke_width=4, fill_color=PAPER, fill_opacity=1).move_to(RIGHT * 4.4 + DOWN * 0.8)
         stick = Dot(radius=0.24, color=BLUE).move_to(gate.get_center())
@@ -83,16 +83,18 @@ class Slide06L(Scene):
         drift.add_updater(drift_upd)
         dl.add_updater(dl_upd)
         pl = T("조종자 역방향 조향", 26, BLUE, True).next_to(gate, UP, buff=0.4).set_opacity(0)
+        neutral = T("스틱 중립 · 조종 입력 없음", 26, INK, True).next_to(gate, UP, buff=0.4)
+        ring = Circle(radius=1.15, color=GREEN, stroke_width=5).move_to(gate.get_center())
         self.add(drift, dl)
-        self.add(title, quad, gate, stick, sl)
+        self.add(title, quad, gate, stick, sl, neutral, ring)
         self.wait(0.6)
         # 1) 스틱 중립, 기체 흘러감
         self.play(quad.animate.shift(RIGHT * 2.6), d_on.animate.set_value(1), run_time=3.0, rate_func=linear)
         self.wait(0.3)
         # 2) 조종자 반대 입력
-        self.play(stick.animate.shift(LEFT * 0.62), pl.animate.set_opacity(1), run_time=0.7)
+        self.play(stick.animate.shift(LEFT * 0.62), pl.animate.set_opacity(1), neutral.animate.set_opacity(0), ring.animate.set_opacity(0), run_time=0.7)
         self.play(quad.animate.shift(LEFT * 2.6), d_on.animate.set_value(0), run_time=2.6)
-        self.play(stick.animate.move_to(gate.get_center()), pl.animate.set_opacity(0), run_time=0.7)
+        self.play(stick.animate.move_to(gate.get_center()), pl.animate.set_opacity(0), neutral.animate.set_opacity(1), ring.animate.set_opacity(1), run_time=0.7)
         self.wait(0.3)
         # 3) 다시 흘러감
         self.play(quad.animate.shift(RIGHT * 2.2), d_on.animate.set_value(1), run_time=2.4, rate_func=linear)
