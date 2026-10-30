@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build both browser-only AI startup camp presentation decks."""
+"""Build the browser-only presentation decks published to Pages."""
 
 from __future__ import annotations
 
@@ -13,6 +13,7 @@ DECKS = (
     ("ai-startup-camp-drone", ""),
     ("ai-startup-camp-drone-10min", "10min"),
     ("2026-2-recruit", "2026-2-recruit"),
+    ("2026-10-30-result-share", "2026-10-30-result-share"),
 )
 RUNTIME_FILES = ("index.html", "support.js", "deck-stage.js")
 

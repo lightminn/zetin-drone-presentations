@@ -59,6 +59,13 @@ class PresentationPagesBuildTests(unittest.TestCase):
                 "2026-2-recruit/assets/form-qr.png",
                 "2026-2-recruit/assets/github-qr.png",
                 "2026-2-recruit/assets/hover_demo.mp4",
+                "2026-10-30-result-share/index.html",
+                "2026-10-30-result-share/support.js",
+                "2026-10-30-result-share/deck-stage.js",
+                "2026-10-30-result-share/vendor/uos-slide-template/_ds_bundle.js",
+                "2026-10-30-result-share/assets/hover_demo.mp4",
+                "2026-10-30-result-share/assets/anim/slide10.mp4",
+                "2026-10-30-result-share/assets/anim/slide10.jpg",
             }
             missing = sorted(path for path in required if not (site / path).is_file())
 
