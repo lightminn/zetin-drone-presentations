@@ -231,17 +231,16 @@ def svg_camera():
 
 
 def svg_poshold():
-    """오늘 테더 비행별 위치 유지 지표(실비행 로그): 최장 연속 활성 시간, 활성/비활성 구간 수평 속도 RMS."""
+    """오늘 테더 비행(실로그): 위 막대 = 위치 유지 최장 연속 시간, 아래 막대 = 켠 구간 대 그 밖 구간의 수평 이동 속도."""
     d = json.loads((Path(__file__).parent / "poshold_stats.json").read_text())
     n = len(d)
     x0, x1 = 70, 566
     slot = (x1 - x0) / n
     cx = lambda i: x0 + slot * (i + 0.5)
     out = []
-    # (a) 최장 연속 활성 시간
-    ya0, ya1, amax = 34, 150, 25.0
+    ya0, ya1, amax = 38, 140, 25.0
     Ya = lambda v: ya1 - (ya1 - ya0) * v / amax
-    out.append(f'<text x="{x0}" y="18" font-size="16" font-weight="800" fill="{INK}">위치 유지 최장 연속 구간 (s)</text>')
+    out.append(f'<text x="{x0-50}" y="18" font-size="16" font-weight="800" fill="{INK}">위치 유지가 한 번에 이어진 최장 시간 (초)</text>')
     for v in (0, 10, 20):
         out.append(f'<line x1="{x0}" y1="{Ya(v):.1f}" x2="{x1}" y2="{Ya(v):.1f}" stroke="{MUTED}" stroke-width="1" stroke-dasharray="3 6"/>'
                    f'<text x="{x0-8}" y="{Ya(v)+5:.1f}" text-anchor="end" font-size="14" fill="{MUTED}">{v}</text>')
@@ -252,24 +251,25 @@ def svg_poshold():
                        f'<text x="{cx(i):.1f}" y="{Ya(v)-6:.1f}" text-anchor="middle" font-size="14" font-weight="800" fill="{BLUE}">{v:.1f}</text>')
         else:
             out.append(f'<text x="{cx(i):.1f}" y="{ya1-8}" text-anchor="middle" font-size="14" font-weight="800" fill="{MUTED}">끔</text>')
-    # (b) 수평 속도 RMS
-    yb0, yb1, bmax = 214, 316, 0.25
+    yb0, yb1, bmax = 216, 292, 0.25
     Yb = lambda v: yb1 - (yb1 - yb0) * v / bmax
-    out.append(f'<text x="{x0}" y="196" font-size="16" font-weight="800" fill="{INK}">수평 속도 RMS (m/s)</text>')
-    out.append(f'<rect x="{x1-150}" y="184" width="14" height="10" fill="{BLUE}"/><text x="{x1-132}" y="194" font-size="14" fill="{INK}">위치 유지 구간</text>'
-               f'<rect x="{x1-36}" y="184" width="14" height="10" fill="{AMBER}"/><text x="{x1-18}" y="194" font-size="14" fill="{INK}">그 밖</text>')
+    out.append(f'<text x="{x0-50}" y="188" font-size="16" font-weight="800" fill="{INK}">수평 이동 속도 (m/s) · 낮을수록 덜 움직임</text>')
+    out.append(f'<rect x="{x0-46}" y="198" width="14" height="10" fill="{BLUE}"/><text x="{x0-28}" y="208" font-size="14" fill="{INK}">위치 유지를 켠 구간</text>'
+               f'<rect x="{x0+116}" y="198" width="14" height="10" fill="{AMBER}"/><text x="{x0+134}" y="208" font-size="14" fill="{INK}">그 밖 구간(이착륙 포함)</text>')
     for v in (0, 0.1, 0.2):
         out.append(f'<line x1="{x0}" y1="{Yb(v):.1f}" x2="{x1}" y2="{Yb(v):.1f}" stroke="{MUTED}" stroke-width="1" stroke-dasharray="3 6"/>'
                    f'<text x="{x0-8}" y="{Yb(v)+5:.1f}" text-anchor="end" font-size="14" fill="{MUTED}">{v:g}</text>')
     for i, o in enumerate(d):
-        for k, (key, col, dx) in enumerate((("rms_active", BLUE, -17), ("rms_other", AMBER, 17))):
+        for key, col, dx in (("rms_active", BLUE, -17), ("rms_other", AMBER, 17)):
             v = o[key]
             if v is None:
                 continue
             out.append(f'<rect x="{cx(i)+dx-16:.1f}" y="{Yb(v):.1f}" width="32" height="{yb1-Yb(v):.1f}" fill="{col}"/>'
                        f'<text x="{cx(i)+dx:.1f}" y="{Yb(v)-5:.1f}" text-anchor="middle" font-size="13" fill="{INK}">{v:.2f}</text>')
-        out.append(f'<text x="{cx(i):.1f}" y="{yb1+22}" text-anchor="middle" font-size="15" fill="{MUTED}">{o["time"]}</text>')
-    return f"""<svg viewBox="0 0 580 346" role="img" aria-label="비행별 위치 유지 최장 연속 구간과 수평 속도 비교" style="width:100%;height:100%">{"".join(out)}</svg>"""
+        lab = f"{i+1}회" + (" · 끔" if o["longest_active_s"] == 0 else "")
+        out.append(f'<text x="{cx(i):.1f}" y="{yb1+22}" text-anchor="middle" font-size="15" fill="{MUTED}">{lab}</text>')
+    out.append(f'<text x="{(x0+x1)/2}" y="343" text-anchor="middle" font-size="16" font-weight="800" fill="{BLUE}">켠 구간의 속도가 5회 모두 더 낮음 (평균 약 32 %)</text>')
+    return f"""<svg viewBox="0 0 580 352" role="img" aria-label="비행별 위치 유지 최장 시간과 수평 이동 속도 비교" style="width:100%;height:100%">{"".join(out)}</svg>"""
 
 
 def svg_loops():
